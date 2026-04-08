@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ElectroHub — Premium Electronics</title>
+  <link rel="stylesheet" href="assets/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- ANNOUNCEMENT BAR -->
+<div class="ann-bar">
+  <div class="ann-track">
+    <span>⚡ Free shipping above ₹999</span>
+    <span>🎯 Use <b>ELECTRO10</b> for 10% off</span>
+    <span>🔒 1-Year Warranty on all products</span>
+    <span>📦 30-day easy returns</span>
+    <span>⚡ Free shipping above ₹999</span>
+    <span>🎯 Use <b>ELECTRO10</b> for 10% off</span>
+    <span>🔒 1-Year Warranty on all products</span>
+    <span>📦 30-day easy returns</span>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-inner">
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="logo" href="#" onclick="showPage('home');return false;">
+      <span class="logo-bolt">⚡</span>Electro<span>Hub</span>
+    </a>
+    <div class="nav-search-wrap">
+      <input id="searchInput" type="text" placeholder="Search phones, laptops, TVs…" oninput="liveSearch(this.value)" onkeydown="if(event.key==='Enter')doSearch()"/>
+      <button class="search-ico" onclick="doSearch()"><i class="fa fa-search"></i></button>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-icon-btn" onclick="showPage('wishlist')" title="Wishlist">
+        <i class="fa fa-heart"></i>
+        <span class="badge" id="wishlistBadge">0</span>
+      </button>
+      <button class="nav-icon-btn" onclick="openCart()" title="Cart">
+        <i class="fa fa-shopping-cart"></i>
+        <span class="badge" id="cartBadge">0</span>
+      </button>
+      <div class="account-wrap">
+        <button class="nav-icon-btn" onclick="toggleAccountMenu()" title="Account" id="accountBtn">
+          <i class="fa fa-user"></i>
+        </button>
+        <div class="account-dropdown" id="accountDropdown">
+          <div id="guestMenu">
+            <button onclick="showPage('login');closeAccountMenu()"><i class="fa fa-sign-in-alt"></i> Login</button>
+            <button onclick="showPage('register');closeAccountMenu()"><i class="fa fa-user-plus"></i> Register</button>
+          </div>
+          <div id="userMenu" style="display:none">
+            <div class="acc-user-info" id="accUserInfo"></div>
+            <button onclick="showPage('orders');closeAccountMenu()"><i class="fa fa-box"></i> My Orders</button>
+            <button onclick="showPage('wishlist');closeAccountMenu()"><i class="fa fa-heart"></i> Wishlist</button>
+            <button onclick="showPage('profile');closeAccountMenu()"><i class="fa fa-cog"></i> Profile</button>
+            <button onclick="showPage('admin');closeAccountMenu()" id="adminMenuBtn" style="display:none"><i class="fa fa-shield-alt"></i> Admin</button>
+            <hr/>
+            <button onclick="logout()" class="logout-btn"><i class="fa fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mob-search">
+      <input type="text" placeholder="Search products…" oninput="liveSearch(this.value)"/>
+      <i class="fa fa-search"></i>
+    </div>
+    <a href="#" onclick="filterCategory('all');closeMobileMenu();return false;">All Products</a>
+    <a href="#" onclick="filterCategory('phones');closeMobileMenu();return false;">📱 Phones</a>
+    <a href="#" onclick="filterCategory('laptops');closeMobileMenu();return false;">💻 Laptops</a>
+    <a href="#" onclick="filterCategory('tvs');closeMobileMenu();return false;">📺 TVs</a>
+    <a href="#" onclick="filterCategory('audio');closeMobileMenu();return false;">🎧 Audio</a>
+    <a href="#" onclick="filterCategory('cameras');closeMobileMenu();return false;">📷 Cameras</a>
+    <a href="#" onclick="filterCategory('gaming');closeMobileMenu();return false;">🎮 Gaming</a>
+    <a href="#" onclick="filterCategory('wearables');closeMobileMenu();return false;">⌚ Wearables</a>
+    <hr/>
+    <a href="#" onclick="showPage('login');closeMobileMenu();return false;">Login / Register</a>
+    <a href="#" onclick="showPage('orders');closeMobileMenu();return false;">My Orders</a>
+  </div>
+</nav>
+
+<!-- CATEGORY NAV -->
+<div class="cat-nav" id="catNav">
+  <div class="cat-nav-inner">
+    <button class="cat-btn active" data-cat="all" onclick="filterCategory('all',this)">All</button>
+    <button class="cat-btn" data-cat="phones" onclick="filterCategory('phones',this)">📱 Phones</button>
+    <button class="cat-btn" data-cat="laptops" onclick="filterCategory('laptops',this)">💻 Laptops</button>
+    <button class="cat-btn" data-cat="tvs" onclick="filterCategory('tvs',this)">📺 TVs</button>
+    <button class="cat-btn" data-cat="audio" onclick="filterCategory('audio',this)">🎧 Audio</button>
+    <button class="cat-btn" data-cat="cameras" onclick="filterCategory('cameras',this)">📷 Cameras</button>
+    <button class="cat-btn" data-cat="accessories" onclick="filterCategory('accessories',this)">🔌 Accessories</button>
+    <button class="cat-btn" data-cat="gaming" onclick="filterCategory('gaming',this)">🎮 Gaming</button>
+    <button class="cat-btn" data-cat="wearables" onclick="filterCategory('wearables',this)">⌚ Wearables</button>
+  </div>
+</div>
+
+<!-- ========== HOME PAGE ========== -->
+<div id="page-home" class="page active">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">🔥 New Arrivals 2025</div>
+      <h1>Next-Gen Tech<br/><span class="hero-accent">At Your Fingertips</span></h1>
+      <p>Phones, laptops, TVs &amp; more — genuine products with warranty, fast delivery &amp; easy returns.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="scrollToProducts()">Shop Now <i class="fa fa-arrow-right"></i></button>
+        <button class="btn-ghost" onclick="filterCategory('phones')">Explore Phones</button>
+      </div>
+      <div class="hero-stats">
+        <div><strong>50K+</strong><span>Happy Customers</span></div>
+        <div><strong>2000+</strong><span>Products</span></div>
+        <div><strong>4.8★</strong><span>Avg Rating</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-glow"></div>
+      <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80" alt="Electronics" class="hero-img"/>
+    </div>
+  </section>
+
+  <!-- DEALS STRIP -->
+  <section class="deals-strip">
+    <div class="deal-card" onclick="filterCategory('phones')"><span>📱</span><div><strong>Phones</strong><small>Up to 30% off</small></div></div>
+    <div class="deal-card" onclick="filterCategory('laptops')"><span>💻</span><div><strong>Laptops</strong><small>EMI from ₹999/mo</small></div></div>
+    <div class="deal-card" onclick="filterCategory('tvs')"><span>📺</span><div><strong>Smart TVs</strong><small>Best prices</small></div></div>
+    <div class="deal-card" onclick="filterCategory('audio')"><span>🎧</span><div><strong>Audio</strong><small>Premium sound</small></div></div>
+    <div class="deal-card" onclick="filterCategory('gaming')"><span>🎮</span><div><strong>Gaming</strong><small>Top gear</small></div></div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section class="products-section" id="productsSection">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Our Products</h2>
+        <p class="section-sub" id="productCountLabel">Showing all products</p>
+      </div>
+      <div class="filter-sort-wrap">
+        <div class="price-filter">
+          <label>Max Price: <span id="priceLabel">₹2,00,000</span></label>
+          <input type="range" id="priceRange" min="0" max="200000" value="200000" step="1000" oninput="applyPriceFilter(this.value)"/>
+        </div>
+        <select id="sortSelect" onchange="sortProducts(this.value)">
+          <option value="default">Sort: Featured</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+          <option value="discount">Most Discount</option>
+        </select>
+      </div>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+    <div class="no-results" id="noResults" style="display:none">
+      <i class="fa fa-search"></i><h3>No products found</h3><p>Try a different search or category</p>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-us">
+    <h2 class="section-title center">Why ElectroHub?</h2>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon">🚀</div><h3>Fast Delivery</h3><p>Same-day delivery in major cities. Express shipping nationwide.</p></div>
+      <div class="why-card"><div class="why-icon">🔒</div><h3>Secure Payments</h3><p>UPI, Cards, Net Banking, EMI. 100% encrypted &amp; safe.</p></div>
+      <div class="why-card"><div class="why-icon">🛡️</div><h3>1-Year Warranty</h3><p>All products covered. Hassle-free service at your doorstep.</p></div>
+      <div class="why-card"><div class="why-icon">↩️</div><h3>30-Day Returns</h3><p>Not satisfied? Return it — no questions asked.</p></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <h2 class="section-title center">What Customers Say</h2>
+    <div class="testi-grid">
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p>"Got my laptop in 2 days. Amazing packaging and exactly as described. Will shop again!"</p><div class="testi-author"><span class="testi-av">R</span><div><strong>Rahul Mehta</strong><small>Mumbai · Verified Buyer</small></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★★</div><p>"The iPhone I ordered arrived sealed and genuine. Best price I found online. Highly recommend!"</p><div class="testi-author"><span class="testi-av">P</span><div><strong>Priya Singh</strong><small>Bangalore · Verified Buyer</small></div></div></div>
+      <div class="testi-card"><div class="testi-stars">★★★★☆</div><p>"Customer support was super helpful when my TV had a minor issue. Got it resolved in 24 hours."</p><div class="testi-author"><span class="testi-av">A</span><div><strong>Arjun Patel</strong><small>Pune · Verified Buyer</small></div></div></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== PRODUCT DETAIL PAGE ========== -->
+<div id="page-detail" class="page">
+  <div class="page-container">
+    <button class="back-btn" onclick="historyBack()"><i class="fa fa-arrow-left"></i> Back</button>
+    <div class="detail-grid" id="detailContent"></div>
+    <div class="reviews-section" id="reviewsSection"></div>
+  </div>
+</div>
+
+<!-- ========== SEARCH PAGE ========== -->
+<div id="page-search" class="page">
+  <div class="page-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="showPage('home')"><i class="fa fa-arrow-left"></i> Back</button>
+      <h2>Results for "<span id="searchQueryLabel"></span>"</h2>
+    </div>
+    <div class="product-grid" id="searchGrid"></div>
+    <div class="empty-state" id="searchEmpty" style="display:none"><div class="empty-icon">🔍</div><h3>No results found</h3><p>Try different keywords</p></div>
+  </div>
+</div>
+
+<!-- ========== WISHLIST PAGE ========== -->
+<div id="page-wishlist" class="page">
+  <div class="page-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="showPage('home')"><i class="fa fa-arrow-left"></i> Back</button>
+      <h2>My Wishlist</h2>
+    </div>
+    <div class="product-grid" id="wishlistGrid"></div>
+    <div class="empty-state" id="wishlistEmpty" style="display:none"><div class="empty-icon">💔</div><h3>Wishlist is empty</h3><p>Save products you love!</p><button class="btn-primary" onclick="showPage('home')">Browse Products</button></div>
+  </div>
+</div>
+
+<!-- ========== LOGIN PAGE ========== -->
+<div id="page-login" class="page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">⚡ ElectroHub</div>
+      <h2>Welcome Back</h2>
+      <p class="auth-sub">Login to your account</p>
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="you@example.com" required/></div>
+        <div class="form-group"><label>Password</label>
+          <div class="pw-wrap"><input type="password" id="loginPassword" placeholder="Enter password" required/><button type="button" onclick="togglePw('loginPassword')"><i class="fa fa-eye"></i></button></div>
+        </div>
+        <div class="form-row"><label class="checkbox-label"><input type="checkbox"/> Remember me</label><a href="#" class="forgot-link">Forgot password?</a></div>
+        <button type="submit" class="btn-auth">Login <i class="fa fa-arrow-right"></i></button>
+      </form>
+      <div class="auth-divider"><span>or login as</span></div>
+      <button class="btn-demo" onclick="demoLogin('admin')">🔑 Admin Demo Login</button>
+      <button class="btn-demo" onclick="demoLogin('user')" style="margin-top:8px">👤 User Demo Login</button>
+      <p class="auth-switch">Don't have an account? <a href="#" onclick="showPage('register')">Register</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== REGISTER PAGE ========== -->
+<div id="page-register" class="page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">⚡ ElectroHub</div>
+      <h2>Create Account</h2>
+      <p class="auth-sub">Join thousands of happy customers</p>
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name" required/></div>
+        <div class="form-group"><label>Email Address</label><input type="email" id="regEmail" placeholder="you@example.com" required/></div>
+        <div class="form-group"><label>Mobile Number</label><input type="tel" id="regPhone" placeholder="+91 XXXXX XXXXX" required/></div>
+        <div class="form-group"><label>Password</label>
+          <div class="pw-wrap"><input type="password" id="regPassword" placeholder="Min 6 characters" required/><button type="button" onclick="togglePw('regPassword')"><i class="fa fa-eye"></i></button></div>
+        </div>
+        <div class="form-group"><label>Confirm Password</label>
+          <div class="pw-wrap"><input type="password" id="regConfirm" placeholder="Repeat password" required/><button type="button" onclick="togglePw('regConfirm')"><i class="fa fa-eye"></i></button></div>
+        </div>
+        <label class="checkbox-label" style="margin-bottom:16px"><input type="checkbox" id="agreeTerms" required/> I agree to the <a href="#">Terms &amp; Conditions</a></label>
+        <button type="submit" class="btn-auth">Create Account <i class="fa fa-arrow-right"></i></button>
+      </form>
+      <p class="auth-switch">Already have an account? <a href="#" onclick="showPage('login')">Login</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CART SIDEBAR ========== -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>Your Cart <span id="cartCountLabel">(0 items)</span></h3>
+    <button class="close-btn" onclick="closeCart()"><i class="fa fa-times"></i></button>
+  </div>
+  <div id="cartBody">
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+      <div class="coupon-row">
+        <input type="text" id="couponInput" placeholder="Promo code (ELECTRO10)"/>
+        <button onclick="applyCoupon()">Apply</button>
+      </div>
+      <div class="cart-summary">
+        <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+        <div class="summary-row"><span>Shipping</span><span id="cartShipping">Free</span></div>
+        <div class="summary-row" id="discountRow" style="display:none"><span>Discount (10%)</span><span id="cartDiscount" style="color:#22c55e">-₹0</span></div>
+        <div class="summary-row"><span>Tax (18%)</span><span id="cartTax">₹0</span></div>
+        <div class="summary-row total-row"><span>Total</span><span id="cartTotal">₹0</span></div>
+      </div>
+      <button class="checkout-btn" onclick="goCheckout()">Proceed to Checkout <i class="fa fa-arrow-right"></i></button>
+    </div>
+  </div>
+  <div class="cart-empty" id="cartEmpty">
+    <div class="empty-icon">🛒</div>
+    <h4>Your cart is empty</h4>
+    <p>Add some products to get started!</p>
+    <button class="btn-primary" onclick="closeCart();showPage('home')">Browse Products</button>
+  </div>
+</div>
+
+<!-- ========== CHECKOUT PAGE ========== -->
+<div id="page-checkout" class="page">
+  <div class="page-container">
+    <button class="back-btn" onclick="openCart()"><i class="fa fa-arrow-left"></i> Back to Cart</button>
+    <h2 class="page-title">Checkout</h2>
+    <div class="checkout-grid">
+      <div class="checkout-left">
+        <div class="steps-bar">
+          <div class="step-item active" id="stepInd1"><div class="step-num">1</div><span>Address</span></div>
+          <div class="step-line"></div>
+          <div class="step-item" id="stepInd2"><div class="step-num">2</div><span>Payment</span></div>
+          <div class="step-line"></div>
+          <div class="step-item" id="stepInd3"><div class="step-num">3</div><span>Review</span></div>
+        </div>
+
+        <!-- Step 1 -->
+        <div id="chkStep1" class="checkout-card">
+          <h3>Delivery Address</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="chkName" placeholder="Full name"/></div>
+            <div class="form-group"><label>Mobile *</label><input type="tel" id="chkPhone" placeholder="+91 XXXXX XXXXX"/></div>
+            <div class="form-group full"><label>Address Line 1 *</label><input type="text" id="chkAddr1" placeholder="House/Flat No., Street"/></div>
+            <div class="form-group full"><label>Address Line 2</label><input type="text" id="chkAddr2" placeholder="Area, Landmark (optional)"/></div>
+            <div class="form-group"><label>City *</label><input type="text" id="chkCity" placeholder="City"/></div>
+            <div class="form-group"><label>State *</label><input type="text" id="chkState" placeholder="State"/></div>
+            <div class="form-group"><label>Pincode *</label><input type="text" id="chkPin" placeholder="6-digit pincode"/></div>
+            <div class="form-group"><label>Country</label><input type="text" id="chkCountry" value="India"/></div>
+          </div>
+          <button class="btn-primary" onclick="goToStep(2)">Continue to Payment <i class="fa fa-arrow-right"></i></button>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="chkStep2" class="checkout-card" style="display:none">
+          <h3>Payment Method</h3>
+          <div class="payment-options">
+            <label class="pay-opt"><input type="radio" name="payment" value="upi" checked/><div class="pay-lbl"><span>📱</span><div><strong>UPI</strong><small>GPay, PhonePe, Paytm</small></div></div></label>
+            <label class="pay-opt"><input type="radio" name="payment" value="card"/><div class="pay-lbl"><span>💳</span><div><strong>Credit / Debit Card</strong><small>Visa, Mastercard, RuPay</small></div></div></label>
+            <label class="pay-opt"><input type="radio" name="payment" value="netbanking"/><div class="pay-lbl"><span>🏦</span><div><strong>Net Banking</strong><small>All major banks</small></div></div></label>
+            <label class="pay-opt"><input type="radio" name="payment" value="emi"/><div class="pay-lbl"><span>📅</span><div><strong>EMI</strong><small>0% EMI available</small></div></div></label>
+            <label class="pay-opt"><input type="radio" name="payment" value="cod"/><div class="pay-lbl"><span>💵</span><div><strong>Cash on Delivery</strong><small>Pay when delivered</small></div></div></label>
+          </div>
+          <div class="step-btns">
+            <button class="btn-ghost" onclick="goToStep(1)"><i class="fa fa-arrow-left"></i> Back</button>
+            <button class="btn-primary" onclick="goToStep(3)">Review Order <i class="fa fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="chkStep3" class="checkout-card" style="display:none">
+          <h3>Review &amp; Confirm</h3>
+          <div id="reviewItems"></div>
+          <div class="review-info" id="reviewAddress"></div>
+          <div class="review-info" id="reviewPayment"></div>
+          <div class="step-btns">
+            <button class="btn-ghost" onclick="goToStep(2)"><i class="fa fa-arrow-left"></i> Back</button>
+            <button class="btn-primary place-btn" onclick="placeOrder()">Place Order ✓</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="checkout-right">
+        <div class="checkout-card">
+          <h3>Order Summary</h3>
+          <div id="chkItems"></div>
+          <hr style="margin:12px 0;border-color:var(--border)"/>
+          <div class="summary-row"><span>Subtotal</span><span id="chkSubtotal">₹0</span></div>
+          <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+          <div class="summary-row" id="chkDiscRow" style="display:none"><span>Discount</span><span id="chkDiscount" style="color:#22c55e">-₹0</span></div>
+          <div class="summary-row"><span>Tax (18%)</span><span id="chkTax">₹0</span></div>
+          <div class="summary-row total-row"><span>Total</span><span id="chkTotal">₹0</span></div>
+          <div class="secure-note">🔒 Secure Checkout &nbsp;·&nbsp; ✅ 1-Year Warranty</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ORDER SUCCESS PAGE ========== -->
+<div id="page-success" class="page">
+  <div class="success-container">
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <h2>Order Placed!</h2>
+      <p>Thank you for shopping with ElectroHub. Your order is confirmed &amp; being processed.</p>
+      <div class="order-id-box">Order ID: <strong id="successOrderId"></strong></div>
+      <div class="track-steps">
+        <div class="track-step done"><div class="ts-dot">✓</div><span>Confirmed</span></div>
+        <div class="track-line"></div>
+        <div class="track-step"><div class="ts-dot">2</div><span>Processing</span></div>
+        <div class="track-line"></div>
+        <div class="track-step"><div class="ts-dot">3</div><span>Shipped</span></div>
+        <div class="track-line"></div>
+        <div class="track-step"><div class="ts-dot">4</div><span>Delivered</span></div>
+      </div>
+      <div class="success-btns">
+        <button class="btn-primary" onclick="showPage('orders')">Track Order <i class="fa fa-map-marker-alt"></i></button>
+        <button class="btn-ghost" onclick="showPage('home')">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ORDERS PAGE ========== -->
+<div id="page-orders" class="page">
+  <div class="page-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="showPage('home')"><i class="fa fa-arrow-left"></i> Back</button>
+      <h2>My Orders</h2>
+    </div>
+    <div id="ordersList"></div>
+    <div class="empty-state" id="ordersEmpty" style="display:none">
+      <div class="empty-icon">📦</div><h3>No orders yet</h3><p>Start shopping!</p>
+      <button class="btn-primary" onclick="showPage('home')">Shop Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROFILE PAGE ========== -->
+<div id="page-profile" class="page">
+  <div class="page-container">
+    <div class="page-top">
+      <button class="back-btn" onclick="showPage('home')"><i class="fa fa-arrow-left"></i> Back</button>
+      <h2>My Profile</h2>
+    </div>
+    <div class="profile-grid">
+      <div class="profile-left">
+        <div class="profile-av" id="profileAv"></div>
+        <h3 id="profileName"></h3>
+        <p id="profileEmail" class="muted"></p>
+        <div class="profile-stats">
+          <div><strong id="profOrderCnt">0</strong><span>Orders</span></div>
+          <div><strong id="profWishCnt">0</strong><span>Wishlist</span></div>
+          <div><strong id="profReviewCnt">0</strong><span>Reviews</span></div>
+        </div>
+        <button class="btn-ghost" onclick="logout()" style="margin-top:16px;width:100%"><i class="fa fa-sign-out-alt"></i> Logout</button>
+      </div>
+      <div class="profile-right">
+        <div class="checkout-card">
+          <h3>Edit Profile</h3>
+          <div class="form-group"><label>Full Name</label><input type="text" id="editName"/></div>
+          <div class="form-group"><label>Email</label><input type="email" id="editEmail"/></div>
+          <div class="form-group"><label>Mobile</label><input type="tel" id="editPhone"/></div>
+          <div class="form-group"><label>Default Address</label><textarea id="editAddress" rows="3"></textarea></div>
+          <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+        </div>
+        <div class="checkout-card" style="margin-top:16px">
+          <h3>Change Password</h3>
+          <div class="form-group"><label>Current Password</label><input type="password" id="curPw" placeholder="Current password"/></div>
+          <div class="form-group"><label>New Password</label><input type="password" id="newPw" placeholder="New password"/></div>
+          <div class="form-group"><label>Confirm New</label><input type="password" id="confirmPw" placeholder="Confirm new password"/></div>
+          <button class="btn-primary" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ADMIN PAGE ========== -->
+<div id="page-admin" class="page">
+  <div class="admin-wrap">
+    <div class="admin-hdr">
+      <h2>⚡ Admin Panel</h2>
+      <button class="btn-ghost" onclick="showPage('home')">← Back to Store</button>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('dashboard',this)">📊 Dashboard</button>
+      <button class="admin-tab" onclick="switchAdminTab('products',this)">📦 Products</button>
+      <button class="admin-tab" onclick="switchAdminTab('orders',this)">🛒 Orders</button>
+      <button class="admin-tab" onclick="switchAdminTab('users',this)">👥 Users</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="adminTab-dashboard" class="admin-content">
+      <div class="admin-stats-grid">
+        <div class="admin-stat"><div class="as-icon" style="background:#dbeafe">📦</div><div><strong id="aStat-products">0</strong><span>Products</span></div></div>
+        <div class="admin-stat"><div class="as-icon" style="background:#dcfce7">🛒</div><div><strong id="aStat-orders">0</strong><span>Orders</span></div></div>
+        <div class="admin-stat"><div class="as-icon" style="background:#fef9c3">👥</div><div><strong id="aStat-users">0</strong><span>Users</span></div></div>
+        <div class="admin-stat"><div class="as-icon" style="background:#fce7f3">💰</div><div><strong id="aStat-revenue">₹0</strong><span>Revenue</span></div></div>
+      </div>
+      <div class="checkout-card" style="margin-top:20px"><h3>Recent Orders</h3><div id="adminRecentOrders"></div></div>
+    </div>
+
+    <!-- Products -->
+    <div id="adminTab-products" class="admin-content" style="display:none">
+      <div class="admin-toolbar">
+        <h3>All Products</h3>
+        <button class="btn-primary" onclick="openProductModal()"><i class="fa fa-plus"></i> Add Product</button>
+      </div>
+      <div class="table-wrap">
+        <table class="admin-table"><thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Rating</th><th>Actions</th></tr></thead>
+        <tbody id="adminProductBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Orders -->
+    <div id="adminTab-orders" class="admin-content" style="display:none">
+      <div class="admin-toolbar"><h3>All Orders</h3></div>
+      <div class="table-wrap">
+        <table class="admin-table"><thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody id="adminOrderBody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Users -->
+    <div id="adminTab-users" class="admin-content" style="display:none">
+      <div class="admin-toolbar"><h3>All Users</h3></div>
+      <div class="table-wrap">
+        <table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Orders</th><th>Joined</th></tr></thead>
+        <tbody id="adminUserBody"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PRODUCT MODAL ========== -->
+<div class="modal-overlay" id="productModal" onclick="closeProductModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 id="prodModalTitle">Add Product</h3><button onclick="closeProductModal()"><i class="fa fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Product Name</label><input type="text" id="pName" placeholder="e.g. iPhone 15 Pro"/></div>
+        <div class="form-group"><label>Brand</label><input type="text" id="pBrand" placeholder="e.g. Apple"/></div>
+        <div class="form-group"><label>Category</label>
+          <select id="pCat">
+            <option value="phones">📱 Phones</option><option value="laptops">💻 Laptops</option><option value="tvs">📺 TVs</option>
+            <option value="audio">🎧 Audio</option><option value="cameras">📷 Cameras</option><option value="accessories">🔌 Accessories</option>
+            <option value="gaming">🎮 Gaming</option><option value="wearables">⌚ Wearables</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Price (₹)</label><input type="number" id="pPrice" placeholder="29999"/></div>
+        <div class="form-group"><label>Original Price (₹)</label><input type="number" id="pOriginal" placeholder="34999"/></div>
+        <div class="form-group"><label>Stock</label><input type="number" id="pStock" placeholder="100"/></div>
+        <div class="form-group full"><label>Image URL</label><input type="text" id="pImage" placeholder="https://…"/></div>
+        <div class="form-group full"><label>Short Description</label><input type="text" id="pShort" placeholder="e.g. 6.1-inch, A17 Pro chip, 48MP"/></div>
+        <div class="form-group full"><label>Full Description</label><textarea id="pDesc" rows="4" placeholder="Detailed product description…"></textarea></div>
+        <div class="form-group"><label>Rating (0–5)</label><input type="number" id="pRating" step="0.1" min="0" max="5" placeholder="4.5"/></div>
+        <div class="form-group"><label>Review Count</label><input type="number" id="pReviews" placeholder="128"/></div>
+        <div class="form-group full"><label>Key Specs (comma separated)</label><input type="text" id="pSpecs" placeholder="6.1-inch OLED, 256GB Storage, 5G"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeProductModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== REVIEW MODAL ========== -->
+<div class="modal-overlay" id="reviewModal" onclick="closeReviewModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3>Write a Review</h3><button onclick="closeReviewModal()"><i class="fa fa-times"></i></button></div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;color:var(--text-muted)">Rate this product:</p>
+      <div class="star-input" id="starInput">
+        <span onclick="setStarRating(1)">★</span><span onclick="setStarRating(2)">★</span>
+        <span onclick="setStarRating(3)">★</span><span onclick="setStarRating(4)">★</span>
+        <span onclick="setStarRating(5)">★</span>
+      </div>
+      <div class="form-group" style="margin-top:14px"><label>Your Review</label><textarea id="reviewText" rows="4" placeholder="Share your experience with this product…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeReviewModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitReview()">Submit Review</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer" id="mainFooter">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo" style="margin-bottom:12px">⚡ Electro<span>Hub</span></div>
+      <p>Premium electronics store. Genuine products, fast delivery &amp; best prices across India.</p>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Shop</h4>
+      <a href="#" onclick="filterCategory('phones');return false;">📱 Phones</a>
+      <a href="#" onclick="filterCategory('laptops');return false;">💻 Laptops</a>
+      <a href="#" onclick="filterCategory('tvs');return false;">📺 TVs</a>
+      <a href="#" onclick="filterCategory('audio');return false;">🎧 Audio</a>
+      <a href="#" onclick="filterCategory('cameras');return false;">📷 Cameras</a>
+    </div>
+    <div class="footer-col"><h4>Account</h4>
+      <a href="#" onclick="showPage('login');return false;">Login</a>
+      <a href="#" onclick="showPage('register');return false;">Register</a>
+      <a href="#" onclick="showPage('orders');return false;">My Orders</a>
+      <a href="#" onclick="showPage('wishlist');return false;">Wishlist</a>
+      <a href="#" onclick="showPage('profile');return false;">Profile</a>
+    </div>
+    <div class="footer-col"><h4>Help</h4>
+      <a href="#">Track Order</a><a href="#">Returns</a><a href="#">FAQ</a>
+      <a href="#">Contact Us</a><a href="#">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ElectroHub. All rights reserved.</p>
+    <p>Design By: Sushil Tarange</p>
+    <div class="pay-icons"><span>UPI</span><span>VISA</span><span>MC</span><span>RuPay</span><span>EMI</span></div>
+  </div>
+</footer>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

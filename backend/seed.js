@@ -1,0 +1,57 @@
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+require('dotenv').config();
+const Product = require('./models/Product');
+const User = require('./models/User');
+
+const PRODUCTS_DATA = [
+  { name:"iPhone 15 Pro", brand:"Apple", category:"phones", price:134900, original:149900, image:"https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&q=80", short:"A17 Pro chip, Titanium design, 48MP camera", desc:"The iPhone 15 Pro features the groundbreaking A17 Pro chip, a titanium frame for premium durability, and a 48MP main camera with advanced computational photography. The 6.1-inch Super Retina XDR display delivers stunning visuals.", specs:["A17 Pro Chip","6.1-inch OLED","48MP Camera","USB-C Port","5G Ready","256GB Storage"], rating:4.8, reviews:1240, stock:25, isNewProduct:true },
+  { name:"Samsung Galaxy S24 Ultra", brand:"Samsung", category:"phones", price:129999, original:134999, image:"https://images.unsplash.com/photo-1610945264803-c22b62d2a7b3?w=400&q=80", short:"200MP camera, S-Pen included, 6.8-inch display", desc:"The Galaxy S24 Ultra sets the benchmark with its 200MP camera, integrated S-Pen, and the powerful Snapdragon 8 Gen 3 processor. Experience Galaxy AI features like Circle to Search and Live Translate.", specs:["Snapdragon 8 Gen 3","6.8-inch QHD+","200MP Camera","S-Pen Included","5000mAh Battery","12GB RAM"], rating:4.7, reviews:980, stock:18 },
+  { name:"MacBook Air M3", brand:"Apple", category:"laptops", price:114900, original:124900, image:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80", short:"M3 chip, 15-inch Liquid Retina, 18hr battery", desc:"The MacBook Air with M3 chip delivers exceptional performance with up to 18 hours of battery life. The stunning 15-inch Liquid Retina display and silent fanless design make it the perfect everyday laptop.", specs:["Apple M3 Chip","15-inch Liquid Retina","18hr Battery","16GB Unified Memory","512GB SSD","MagSafe Charging"], rating:4.9, reviews:2100, stock:12, isNewProduct:true },
+  { name:"Dell XPS 15", brand:"Dell", category:"laptops", price:169900, original:184900, image:"https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&q=80", short:"Intel Core i9, RTX 4070, 4K OLED display", desc:"The Dell XPS 15 combines stunning design with extreme performance. Featuring a 4K OLED display, Intel Core i9 processor, and NVIDIA GeForce RTX 4070 graphics for content creation and gaming.", specs:["Intel Core i9","15.6-inch 4K OLED","RTX 4070 8GB","64GB DDR5 RAM","2TB NVMe SSD","Thunderbolt 4"], rating:4.6, reviews:456, stock:8 },
+  { name:"Sony Bravia XR 55-inch 4K", brand:"Sony", category:"tvs", price:89990, original:109990, image:"https://images.unsplash.com/photo-1593784991095-a205069470b6?w=400&q=80", short:"XR Processor, Google TV, Dolby Vision", desc:"Sony Bravia XR with Cognitive Processor XR delivers picture quality that mirrors how humans see. Dolby Vision and Dolby Atmos support for an immersive home theatre experience.", specs:["55-inch 4K OLED","XR Cognitive Processor","Dolby Vision & Atmos","Google TV","HDMI 2.1 x4","120Hz Refresh Rate"], rating:4.7, reviews:789, stock:15 },
+  { name:"LG OLED C3 65-inch", brand:"LG", category:"tvs", price:139990, original:164990, image:"https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?w=400&q=80", short:"OLED evo panel, a9 AI Processor, 120Hz", desc:"LG OLED C3 features the brightest OLED panel with the a9 Gen6 AI Processor 4K. Perfect blacks, infinite contrast, and webOS 23 with ThinQ AI for smart home integration.", specs:["65-inch OLED evo","a9 Gen6 AI Processor","120Hz VRR","Dolby Vision IQ","webOS 23","NVIDIA G-Sync"], rating:4.8, reviews:612, stock:9 },
+  { name:"Sony WH-1000XM5", brand:"Sony", category:"audio", price:29990, original:34990, image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80", short:"Industry-best ANC, 30hr battery, LDAC", desc:"The WH-1000XM5 sets the industry standard for noise cancellation with dual processors. Crystal clear hands-free calling and up to 30 hours of playtime with quick charging.", specs:["30hr Battery Life","Industry-Best ANC","LDAC Hi-Res Audio","Multipoint Connection","360° Spatial Sound","Quick Charge (3min=3hrs)"], rating:4.9, reviews:3400, stock:50 },
+  { name:"Apple AirPods Pro 2nd Gen", brand:"Apple", category:"audio", price:24900, original:26900, image:"https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400&q=80", short:"H2 chip, Adaptive Transparency, MagSafe", desc:"AirPods Pro with H2 chip deliver up to 2x more Active Noise Cancellation. Adaptive Transparency lets you hear the world while protecting your hearing in loud environments.", specs:["H2 Chip","Adaptive ANC","6hr Battery (30hr case)","MagSafe Case","USB-C Charging","Spatial Audio"], rating:4.7, reviews:2800, stock:40 },
+  { name:"Canon EOS R6 Mark II", brand:"Canon", category:"cameras", price:239990, original:259990, image:"https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80", short:"40fps burst, 4K 60p video, IBIS", desc:"The EOS R6 Mark II is Canon's most versatile mirrorless camera. With 40fps burst shooting, subject recognition AF, and 6K RAW video oversampled to 4K, it's perfect for professionals.", specs:["40fps RAW Burst","4K 60p Video","In-Body Stabilization","Subject Recognition AF","Dual Memory Slots","Wi-Fi & Bluetooth"], rating:4.8, reviews:340, stock:6 },
+  { name:"Sony Alpha A7 IV", brand:"Sony", category:"cameras", price:259990, original:279990, image:"https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?w=400&q=80", short:"33MP full-frame, 4K 60p, 759-point AF", desc:"The Alpha 7 IV is a high-resolution hybrid camera for photo and video creators. The 33MP full-frame sensor and Real-time Tracking AF with 759-point coverage delivers professional results.", specs:["33MP Full-Frame","4K 60p 10-bit","759-Point AF","5-Axis Stabilization","Dual SD Slots","CFexpress Type A"], rating:4.7, reviews:280, stock:5 },
+  { name:"Samsung 49-inch Odyssey G9", brand:"Samsung", category:"gaming", price:109990, original:124990, image:"https://images.unsplash.com/photo-1587202372583-49330a15584d?w=400&q=80", short:"240Hz, 1ms, DQHD Curved Gaming Monitor", desc:"The Odyssey G9 is the ultimate gaming monitor with a massive 49-inch 1000R curved display. 240Hz refresh rate and 1ms response time ensure you never miss a frame.", specs:["49-inch DQHD Curved","240Hz Refresh Rate","1ms Response Time","HDR2000","G-Sync Compatible","USB Hub Built-in"], rating:4.6, reviews:520, stock:11 },
+  { name:"PlayStation 5 Console", brand:"Sony", category:"gaming", price:54990, original:54990, image:"https://images.unsplash.com/photo-1607853202273-232359b5d0a4?w=400&q=80", short:"4K gaming, 120fps, DualSense controller", desc:"The PlayStation 5 delivers lightning-fast loading with an ultra-high speed SSD, deeper immersion with support for haptic feedback and adaptive triggers in the DualSense controller.", specs:["Custom AMD RDNA 2","4K 120fps Gaming","Ultra-High Speed SSD","3D Audio","Ray Tracing","Backward Compatible"], rating:4.9, reviews:4200, stock:3, isNewProduct:true },
+  { name:"Apple Watch Ultra 2", brand:"Apple", category:"wearables", price:89900, original:96900, image:"https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=400&q=80", short:"Titanium case, 60hr battery, dual-frequency GPS", desc:"Apple Watch Ultra 2 with the brightest Apple Watch display ever. Built for athletes and adventurers with dual-frequency GPS, precision search for diving, and 60-hour battery in Low Power Mode.", specs:["49mm Titanium Case","S9 SiP Chip","60hr Battery","Dual-Frequency GPS","100m Water Resistance","Emergency Siren"], rating:4.8, reviews:890, stock:14 },
+  { name:"Samsung Galaxy Watch 6 Classic", brand:"Samsung", category:"wearables", price:34999, original:39999, image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80", short:"Rotating bezel, BioActive sensor, WearOS", desc:"Galaxy Watch 6 Classic brings back the iconic rotating bezel with advanced health features. The BioActive sensor monitors heart rate, ECG, body composition and blood oxygen.", specs:["47mm Stainless Steel","Rotating Bezel","BioActive Sensor","ECG & Blood Pressure","40hr Battery","WearOS 4"], rating:4.5, reviews:670, stock:22 },
+  { name:"Anker 735 GaN Charger 65W", brand:"Anker", category:"accessories", price:2999, original:3999, image:"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=400&q=80", short:"65W GaN, 3 ports, compact design", desc:"The Anker 735 Charger uses GaN II technology to deliver ultra-fast charging through 3 ports simultaneously. Charge a MacBook, iPhone, and AirPods all at once with one compact brick.", specs:["65W Total Output","3 Ports (2 USB-C + 1 USB-A)","GaN II Technology","Compact Design","Foldable Plug","ActiveShield 2.0"], rating:4.7, reviews:1560, stock:80 },
+  { name:"Logitech MX Master 3S", brand:"Logitech", category:"accessories", price:9995, original:10995, image:"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80", short:"8000 DPI, MagSpeed scroll, Quiet clicks", desc:"The MX Master 3S is the most advanced Master Series mouse ever. Ultra-fast MagSpeed electromagnetic scrolling lets you scroll 1000 lines per second with zero noise.", specs:["8000 DPI Sensor","MagSpeed Scrolling","Quiet Clicks","3 Device Bluetooth","USB-C Charging","70-Day Battery"], rating:4.8, reviews:2300, stock:35 },
+  { name:"iPad Pro 12.9-inch M4", brand:"Apple", category:"phones", price:109900, original:119900, image:"https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80", short:"M4 chip, Ultra Retina XDR, Apple Pencil Pro", desc:"The iPad Pro with M4 chip is the thinnest Apple product ever. The Ultra Retina XDR OLED display with nano-texture glass and Apple Pencil Pro support makes it perfect for creative professionals.", specs:["Apple M4 Chip","12.9-inch Ultra Retina XDR","Apple Pencil Pro Support","Wi-Fi 6E + 5G","Thunderbolt 4","Face ID"], rating:4.9, reviews:540, stock:20, isNewProduct:true },
+  { name:"OnePlus 12", brand:"OnePlus", category:"phones", price:64999, original:69999, image:"https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=80", short:"Snapdragon 8 Gen 3, 100W charging, Hasselblad", desc:"OnePlus 12 features the flagship Snapdragon 8 Gen 3 processor, Hasselblad-tuned cameras, and blazing 100W SUPERVOOC charging that fills up the 5400mAh battery in just 26 minutes.", specs:["Snapdragon 8 Gen 3","6.82-inch QHD+ 120Hz","100W SUPERVOOC","5400mAh Battery","Hasselblad Camera","50MP Triple Camera"], rating:4.6, reviews:780, stock:30 },
+];
+
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/electrohub')
+  .then(async () => {
+    console.log('Connected to MongoDB');
+    
+    // Clear old data
+    await Product.deleteMany({});
+    await User.deleteMany({});
+    
+    // Insert products
+    await Product.insertMany(PRODUCTS_DATA);
+    console.log('Products seeded');
+
+    // Insert admin user
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash('admin123', salt);
+    await User.create({
+      name: 'Admin',
+      email: 'admin@electrohub.com',
+      password: hashedPassword,
+      role: 'admin',
+      joined: new Date().toLocaleDateString('en-IN')
+    });
+    console.log('Admin user seeded. Login: admin@electrohub.com / admin123');
+
+    process.exit();
+  })
+  .catch(err => {
+    console.log('Error seeding data:', err);
+    process.exit(1);
+  });
